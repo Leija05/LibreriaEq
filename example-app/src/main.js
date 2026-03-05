@@ -15,6 +15,7 @@ const nextBtn = document.querySelector('#next-btn');
 const progress = document.querySelector('#progress');
 const currentTimeLabel = document.querySelector('#current-time');
 const durationLabel = document.querySelector('#duration');
+const uploadContentbox = document.querySelector('#upload-contentbox');
 
 if (
   !player ||
@@ -31,7 +32,8 @@ if (
   !nextBtn ||
   !progress ||
   !currentTimeLabel ||
-  !durationLabel
+  !durationLabel ||
+  !uploadContentbox
 ) {
   throw new Error('No se encontraron elementos de la UI');
 }
@@ -227,6 +229,9 @@ localFileInput.addEventListener('change', () => {
     src: URL.createObjectURL(file),
     art: createArtDataUrl(file.name.replace(/\.[^/.]+$/, '').toUpperCase().slice(0, 10)),
   }));
+
+  const uploadedNames = uploadedTracks.map((track) => track.name).join(' · ');
+  uploadContentbox.textContent = `${uploadedTracks.length} canción(es): ${uploadedNames}`;
 
   queue = [...queue, ...uploadedTracks];
   loadTrack(queue.length - uploadedTracks.length);

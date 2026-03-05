@@ -96,6 +96,79 @@ input[type='range'] {
   width: 100%;
 }
 
+
+.file-input {
+  position: absolute;
+  opacity: 0;
+  width: 0.1px;
+  height: 0.1px;
+  pointer-events: none;
+}
+
+.upload-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  width: fit-content;
+  padding: 0.58rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid rgba(34, 211, 238, 0.6);
+  background: linear-gradient(145deg, rgba(34, 211, 238, 0.3), rgba(139, 92, 246, 0.35));
+  color: #f8fafc;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+}
+
+.upload-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(103, 232, 249, 0.95);
+  box-shadow: 0 8px 20px rgba(34, 211, 238, 0.28);
+}
+
+.upload-icon {
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  border: 2px solid currentColor;
+  border-radius: 3px;
+  position: relative;
+}
+
+.upload-icon::before,
+.upload-icon::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background: currentColor;
+}
+
+.upload-icon::before {
+  top: -6px;
+  width: 2px;
+  height: 8px;
+}
+
+.upload-icon::after {
+  top: -6px;
+  width: 8px;
+  height: 2px;
+}
+
+.upload-contentbox {
+  min-height: 48px;
+  padding: 0.65rem 0.75rem;
+  border-radius: 11px;
+  border: 1px dashed rgba(148, 163, 184, 0.5);
+  background: rgba(15, 23, 42, 0.55);
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
 .player-shell {
   display: grid;
   gap: 0.9rem;

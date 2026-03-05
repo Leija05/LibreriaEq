@@ -16,8 +16,13 @@
 
       <section class="panel top-grid">
         <article class="card uploader-card">
-          <label for="local-file" class="label">Subir canciones</label>
-          <input id="local-file" type="file" accept="audio/*" multiple />
+          <p class="label">Subir canciones</p>
+          <input id="local-file" class="file-input" type="file" accept="audio/*" multiple />
+          <label for="local-file" class="upload-btn">
+            <span class="upload-icon" aria-hidden="true"></span>
+            Elegir archivos
+          </label>
+          <div class="upload-contentbox" id="upload-contentbox">No has subido canciones todavía.</div>
           <p class="hint">Puedes subir una o muchas canciones a la vez.</p>
         </article>
 
