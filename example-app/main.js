@@ -88,6 +88,79 @@ function formatTime(seconds) {
   return `${mins}:${secs}`;
 }
 
+function parseSynchsafeInt(bytes) {
+  return ((bytes[0] & 0x7f) << 21) | ((bytes[1] & 0x7f) << 14) | ((bytes[2] & 0x7f) << 7) | (bytes[3] & 0x7f);
+}
+
+function extractMp3Artwork(file) {
+  if (!(file instanceof File) || !file.type.includes('audio')) {
+    return Promise.resolve(null);
+  }
+
+  return file
+    .arrayBuffer()
+    .then((buffer) => {
+      const bytes = new Uint8Array(buffer);
+      if (bytes.length < 10 || String.fromCharCode(...bytes.slice(0, 3)) !== 'ID3') {
+        return null;
+      }
+
+      const majorVersion = bytes[3];
+      const tagSize = parseSynchsafeInt(bytes.slice(6, 10));
+      let offset = 10;
+      const limit = Math.min(bytes.length, 10 + tagSize);
+
+      while (offset + 10 <= limit) {
+        const frameId = String.fromCharCode(...bytes.slice(offset, offset + 4));
+        if (!frameId.trim()) break;
+
+        const frameSize =
+          majorVersion === 4
+            ? parseSynchsafeInt(bytes.slice(offset + 4, offset + 8))
+            : (bytes[offset + 4] << 24) | (bytes[offset + 5] << 16) | (bytes[offset + 6] << 8) | bytes[offset + 7];
+
+        if (frameSize <= 0 || offset + 10 + frameSize > bytes.length) break;
+
+        if (frameId === 'APIC' || frameId === 'PIC') {
+          const frameData = bytes.slice(offset + 10, offset + 10 + frameSize);
+          const encoding = frameData[0] ?? 0;
+          let cursor = 1;
+
+          let mime = 'image/jpeg';
+          if (frameId === 'APIC') {
+            let mimeEnd = cursor;
+            while (mimeEnd < frameData.length && frameData[mimeEnd] !== 0x00) mimeEnd++;
+            mime = new TextDecoder('latin1').decode(frameData.slice(cursor, mimeEnd)) || mime;
+            cursor = mimeEnd + 1;
+          } else {
+            const format = new TextDecoder('latin1').decode(frameData.slice(cursor, cursor + 3)).toLowerCase();
+            mime = format === 'png' ? 'image/png' : 'image/jpeg';
+            cursor += 3;
+          }
+
+          cursor += 1;
+          if (encoding === 0 || encoding === 3) {
+            while (cursor < frameData.length && frameData[cursor] !== 0x00) cursor++;
+            cursor += 1;
+          } else {
+            while (cursor + 1 < frameData.length && !(frameData[cursor] === 0x00 && frameData[cursor + 1] === 0x00)) cursor += 2;
+            cursor += 2;
+          }
+
+          const imageBytes = frameData.slice(cursor);
+          if (!imageBytes.length) return null;
+          const blob = new Blob([imageBytes], { type: mime });
+          return URL.createObjectURL(blob);
+        }
+
+        offset += 10 + frameSize;
+      }
+
+      return null;
+    })
+    .catch(() => null);
+}
+
 function setPlayIcon(isPlaying) {
   playBtn.innerHTML = isPlaying ? ICONS.pause : ICONS.play;
 }
@@ -140,6 +213,12 @@ const syncSlidersWithEngine = () => {
     const output = slider.parentElement?.querySelector('.band-value');
     if (output) output.textContent = `${value > 0 ? '+' : ''}${value} dB`;
   });
+};
+
+const syncPreampWithEngine = () => {
+  const gain = Number(eq.getPreampGainDb().toFixed(1));
+  preampSlider.value = String(gain);
+  preampValue.textContent = `${gain > 0 ? '+' : ''}${gain}`;
 };
 
 function loadTrack(index) {
@@ -212,23 +291,29 @@ presetSelect.addEventListener('change', () => {
   if (!selectedPreset) return;
   eq.setPreset(selectedPreset);
   syncSlidersWithEngine();
+  syncPreampWithEngine();
 });
 
 preampSlider.addEventListener('input', () => {
   const gain = Number(preampSlider.value);
-  preampValue.textContent = String(gain);
+  preampValue.textContent = `${gain > 0 ? '+' : ''}${gain}`;
   eq.setPreampGain(gain);
 });
 
-localFileInput.addEventListener('change', () => {
+localFileInput.addEventListener('change', async () => {
   const files = Array.from(localFileInput.files ?? []);
   if (!files.length) return;
 
-  const uploadedTracks = files.map((file) => ({
-    name: file.name,
-    src: URL.createObjectURL(file),
-    art: createArtDataUrl(file.name.replace(/\.[^/.]+$/, '').toUpperCase().slice(0, 10)),
-  }));
+  const uploadedTracks = await Promise.all(
+    files.map(async (file) => {
+      const artFromFile = await extractMp3Artwork(file);
+      return {
+        name: file.name,
+        src: URL.createObjectURL(file),
+        art: artFromFile ?? createArtDataUrl(file.name.replace(/\.[^/.]+$/, '').toUpperCase().slice(0, 10)),
+      };
+    })
+  );
 
   const uploadedNames = uploadedTracks.map((track) => track.name).join(' · ');
   uploadContentbox.textContent = `${uploadedTracks.length} canción(es): ${uploadedNames}`;
@@ -272,3 +357,4 @@ progress.addEventListener('input', () => {
 
 loadTrack(0);
 renderPlaylist();
+syncPreampWithEngine();

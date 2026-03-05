@@ -159,6 +159,8 @@ input[type='range'] {
 
 .upload-contentbox {
   min-height: 48px;
+  max-height: 130px;
+  overflow: auto;
   padding: 0.65rem 0.75rem;
   border-radius: 11px;
   border: 1px dashed rgba(148, 163, 184, 0.5);
@@ -278,6 +280,14 @@ audio {
 
 .track-copy {
   display: grid;
+  min-width: 0;
+}
+
+.track-copy strong,
+.track-copy small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .track-copy small {
@@ -294,19 +304,59 @@ audio {
 .band {
   display: grid;
   justify-items: center;
-  gap: 0.45rem;
-  padding: 0.7rem 0.35rem;
+  align-content: start;
+  gap: 0.55rem;
+  padding: 0.8rem 0.35rem;
   border-radius: 14px;
   border: 1px solid rgba(34, 211, 238, 0.32);
   background: linear-gradient(180deg, rgba(34, 211, 238, 0.2), rgba(15, 23, 42, 0.6));
 }
 
+.band label {
+  font-weight: 700;
+}
+
 .band input[type='range'] {
-  appearance: slider-vertical;
-  width: 10px;
-  height: 150px;
-  writing-mode: bt-lr;
+  -webkit-appearance: slider-vertical;
+  appearance: none;
+  width: 14px;
+  height: 170px;
+  writing-mode: vertical-lr;
+  direction: rtl;
   accent-color: #22d3ee;
+  background: transparent;
+}
+
+.band input[type='range']::-webkit-slider-runnable-track {
+  width: 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.85);
+}
+
+.band input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #22d3ee;
+  border: 2px solid #0f172a;
+  margin-top: 0;
+}
+
+.band input[type='range']::-moz-range-track {
+  width: 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.85);
+}
+
+.band input[type='range']::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #22d3ee;
+  border: 2px solid #0f172a;
 }
 
 .band-value {
