@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Demo de ecualizador</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="hero">
+        <p class="pill">LibreriaEq Demo</p>
+        <h1>Ecualizador visual + reproductor local</h1>
+        <p class="subtitle">Sube tu canción, aplica presets y ajusta cada banda en tiempo real.</p>
+      </header>
+
+      <section class="panel controls-grid">
+        <div class="control-card">
+          <label for="local-file" class="label">Canción local</label>
+          <input id="local-file" type="file" accept="audio/*" />
+          <p id="track-name" class="hint">Archivo actual: Demo remota (Hello.ogg)</p>
+        </div>
+
+        <div class="control-card">
+          <label for="preset" class="label">Preset</label>
+          <select id="preset">
+            <option value="flat">Flat</option>
+            <option value="bassBoost">Bass Boost</option>
+            <option value="vocalBoost">Vocal Boost</option>
+            <option value="electronic">Electronic</option>
+          </select>
+        </div>
+
+        <div class="control-card">
+          <label for="preamp" class="label">Preamp (<span id="preamp-value">0</span> dB)</label>
+          <input id="preamp" type="range" min="-12" max="12" step="0.5" value="0" />
+        </div>
+      </section>
+
+      <section class="panel">
+        <audio id="player" controls crossorigin="anonymous">
+          <source src="https://upload.wikimedia.org/wikipedia/commons/4/45/En-us-hello.ogg" type="audio/ogg" />
+        </audio>
+      </section>
+
+      <section class="panel">
+        <h2>Bandas del ecualizador</h2>
+        <section id="bands" class="bands"></section>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
