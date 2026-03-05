@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Demostracion de ecualizador</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="hero panel">
+        <p class="pill">LibreriaEq Demo</p>
+        <h1>Ecualizador vertical + reproductor visual</h1>
+        <p class="subtitle">Sube varias canciones, navega tu playlist y ajusta el sonido en tiempo real.</p>
+      </header>
+
+      <section class="panel top-grid">
+        <article class="card uploader-card">
+          <p class="label">Subir canciones</p>
+          <input id="local-file" class="file-input" type="file" accept="audio/*" multiple />
+          <label for="local-file" class="upload-btn">
+            <span class="upload-icon" aria-hidden="true"></span>
+            Elegir archivos
+          </label>
+          <div class="upload-contentbox" id="upload-contentbox">No has subido canciones todavía.</div>
+          <p class="hint">Puedes subir una o muchas canciones a la vez.</p>
+        </article>
+
+        <article class="card now-playing">
+          <img id="track-art" alt="Portada de la canción" />
+          <div>
+            <p class="label">Reproduciendo ahora</p>
+            <h2 id="track-name">Demo remota (Hello.ogg)</h2>
+          </div>
+        </article>
+
+        <article class="card eq-settings">
+          <label for="preset" class="label">Preset</label>
+          <select id="preset">
+            <option value="flat">Flat</option>
+            <option value="bassBoost">Bass Boost</option>
+            <option value="vocalBoost">Vocal Boost</option>
+            <option value="electronic">Electronic</option>
+          </select>
+
+          <label for="preamp" class="label">Preamp (<span id="preamp-value">0</span> dB)</label>
+          <input id="preamp" type="range" min="-12" max="12" step="0.5" value="0" />
+        </article>
+      </section>
+
+      <section class="panel player-shell">
+        <audio id="player" crossorigin="anonymous">
+          <source src="https://upload.wikimedia.org/wikipedia/commons/4/45/En-us-hello.ogg" type="audio/ogg" />
+        </audio>
+
+        <div class="transport">
+          <button id="prev-btn" class="icon-btn" aria-label="Anterior"></button>
+          <button id="play-btn" class="icon-btn play" aria-label="Reproducir/Pausar"></button>
+          <button id="next-btn" class="icon-btn" aria-label="Siguiente"></button>
+        </div>
+
+        <div class="progress-wrap">
+          <span id="current-time">0:00</span>
+          <input id="progress" type="range" min="0" max="100" step="0.1" value="0" />
+          <span id="duration">0:00</span>
+        </div>
+      </section>
+
+      <section class="panel playlist-panel">
+        <h2>Playlist</h2>
+        <ul id="playlist" class="playlist"></ul>
+      </section>
+
+      <section class="panel">
+        <h2>Bandas del ecualizador (vertical)</h2>
+        <section id="bands" class="bands"></section>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
