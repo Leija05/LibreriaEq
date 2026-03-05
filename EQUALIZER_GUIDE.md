@@ -70,3 +70,21 @@ const eq = createMediaElementEqualizer(context, audio);
 - Sincronizar presets + gains en backend para que el usuario mantenga su perfil.
 - Usar `context.resume()` cuando el usuario dé play (autoplay policies del navegador).
 - En móvil, inicializar el `AudioContext` después de un gesto táctil.
+
+## 7) Ejemplo real: app separada con Vite
+
+En este repositorio tienes una app de ejemplo en `example-app/` que consume la librería mediante un módulo ESM (`equalizer.browser.js`).
+
+```bash
+cd example-app
+python3 -m http.server 5173
+```
+
+Luego abre `http://localhost:5173` en el navegador.
+
+Esto levanta un reproductor simple con:
+
+- selector de presets (`equalizerPresets`)
+- preamp global
+- sliders por banda conectados a `setBandGain`
+- opción para subir una canción local (`<input type="file" accept="audio/*">`) y reproducirla al instante
