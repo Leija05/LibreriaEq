@@ -1,4 +1,4 @@
-import { EqualizerEngine, equalizerPresets } from '../equalizer.browser.js';
+import { EqualizerEngine, equalizerPresets } from './equalizer.browser.js';
 
 const player = document.querySelector('#player');
 const presetSelect = document.querySelector('#preset');
