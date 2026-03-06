@@ -56,13 +56,23 @@ export class EqualizerEngine {
   }
 
   setPreset(preset) {
-    for (const [bandId, gain] of Object.entries(preset.gains)) {
+    const presetGains = preset?.gains ?? {};
+    for (const [bandId] of this.filters.entries()) {
+      const gain = presetGains[bandId] ?? 0;
       this.setBandGain(bandId, gain);
+    }
+
+    if (typeof preset?.preamp === 'number') {
+      this.setPreampGain(preset.preamp);
     }
   }
 
   setPreampGain(gainDb) {
     this.preamp.gain.value = this.toLinearGain(gainDb);
+  }
+
+  getPreampGainDb() {
+    return 20 * Math.log10(this.preamp.gain.value || 1);
   }
 
   getBandGains() {
@@ -79,17 +89,20 @@ export class EqualizerEngine {
 }
 
 export const equalizerPresets = {
-  flat: { name: 'Flat', gains: {} },
+  flat: { name: 'Flat', preamp: 0, gains: {} },
   bassBoost: {
     name: 'Bass Boost',
+    preamp: -1,
     gains: { '32': 6, '64': 5, '125': 3, '250': 1, '500': 0, '1k': -1, '2k': -2, '4k': -1, '8k': 1, '16k': 2 }
   },
   vocalBoost: {
     name: 'Vocal Boost',
+    preamp: 0,
     gains: { '32': -2, '64': -1, '125': 0, '250': 2, '500': 3, '1k': 4, '2k': 3, '4k': 1, '8k': -1, '16k': -2 }
   },
   electronic: {
     name: 'Electronic',
+    preamp: -0.5,
     gains: { '32': 4, '64': 3, '125': 1, '250': -1, '500': -2, '1k': 0, '2k': 2, '4k': 3, '8k': 4, '16k': 3 }
   }
 };
