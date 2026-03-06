@@ -68,6 +68,89 @@ const DEFAULT_TRACK = {
 let queue = [DEFAULT_TRACK];
 let currentIndex = 0;
 
+// Configuración del visualizador
+const ctx = visualizerCanvas.getContext('2d');
+if (!ctx) throw new Error('No se pudo obtener el contexto del canvas');
+
+const analyser = context.createAnalyser();
+analyser.fftSize = 2048;
+analyser.smoothingTimeConstant = 0.8;
+eq.output.connect(analyser);
+
+const bufferLength = analyser.frequencyBinCount;
+const dataArray = new Uint8Array(bufferLength);
+
+function drawVisualizer() {
+  requestAnimationFrame(drawVisualizer);
+  
+  analyser.getByteFrequencyData(dataArray);
+  
+  const width = visualizerCanvas.width;
+  const height = visualizerCanvas.height;
+  
+  ctx.fillStyle = 'rgba(2, 6, 23, 0.85)';
+  ctx.fillRect(0, 0, width, height);
+  
+  // Dibujar curva de respuesta del ecualizador
+  const response = eq.getFrequencyResponse();
+  ctx.strokeStyle = 'rgba(34, 211, 238, 0.6)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  
+  for (let i = 0; i < response.frequencies.length; i++) {
+    const freq = response.frequencies[i];
+    const mag = response.magnitudes[i];
+    const x = (Math.log10(freq) - Math.log10(20)) / (Math.log10(20000) - Math.log10(20)) * width;
+    const db = 20 * Math.log10(mag);
+    const y = height / 2 - (db / 24) * height / 2;
+    
+    if (i === 0) {
+      ctx.moveTo(x, y);
+    } else {
+      ctx.lineTo(x, y);
+    }
+  }
+  ctx.stroke();
+  
+  // Dibujar línea central (0dB)
+  ctx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, height / 2);
+  ctx.lineTo(width, height / 2);
+  ctx.stroke();
+  
+  // Dibujar barras de frecuencia
+  const barWidth = width / bufferLength * 2.5;
+  let barHeight;
+  let x = 0;
+  
+  for (let i = 0; i < bufferLength; i++) {
+    barHeight = (dataArray[i] / 255) * height * 0.8;
+    
+    const hue = (i / bufferLength) * 60 + 180;
+    ctx.fillStyle = `hsla(${hue}, 80%, 60%, 0.6)`;
+    ctx.fillRect(x, height - barHeight, barWidth, barHeight);
+    
+    x += barWidth + 1;
+  }
+  
+  // Dibujar etiquetas de frecuencia
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '11px Arial';
+  ctx.textAlign = 'center';
+  const freqLabels = [32, 64, 125, 250, 500, '1k', '2k', '4k', '8k', '16k'];
+  const freqValues = [32, 64, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
+  
+  freqLabels.forEach((label, idx) => {
+    const freq = freqValues[idx];
+    const xPos = (Math.log10(freq) - Math.log10(20)) / (Math.log10(20000) - Math.log10(20)) * width;
+    ctx.fillText(String(label), xPos, height - 5);
+  });
+}
+
+drawVisualizer();
+
 function createArtDataUrl(label) {
   const safeLabel = String(label).slice(0, 14);
   const svg = `
