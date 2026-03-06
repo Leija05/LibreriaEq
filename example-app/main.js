@@ -444,6 +444,25 @@ progress.addEventListener('input', () => {
   player.currentTime = target;
 });
 
+resetBtn.addEventListener('click', () => {
+  eq.reset();
+  syncSlidersWithEngine();
+  syncPreampWithEngine();
+  presetSelect.value = 'flat';
+});
+
+bypassBtn.addEventListener('click', () => {
+  if (eq.isBypassed()) {
+    eq.enable();
+    bypassBtn.textContent = 'Bypass';
+    bypassBtn.classList.remove('active');
+  } else {
+    eq.bypass();
+    bypassBtn.textContent = 'Enable';
+    bypassBtn.classList.add('active');
+  }
+});
+
 loadTrack(0);
 renderPlaylist();
 syncPreampWithEngine();
