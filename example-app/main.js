@@ -16,6 +16,9 @@ const progress = document.querySelector('#progress');
 const currentTimeLabel = document.querySelector('#current-time');
 const durationLabel = document.querySelector('#duration');
 const uploadContentbox = document.querySelector('#upload-contentbox');
+const resetBtn = document.querySelector('#reset-btn');
+const bypassBtn = document.querySelector('#bypass-btn');
+const visualizerCanvas = document.querySelector('#visualizer');
 
 if (
   !player ||
@@ -33,7 +36,10 @@ if (
   !progress ||
   !currentTimeLabel ||
   !durationLabel ||
-  !uploadContentbox
+  !uploadContentbox ||
+  !resetBtn ||
+  !bypassBtn ||
+  !visualizerCanvas
 ) {
   throw new Error('No se encontraron elementos de la UI');
 }
