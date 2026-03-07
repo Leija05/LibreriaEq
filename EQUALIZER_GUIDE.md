@@ -253,7 +253,7 @@ context.close();
 **Ejecutar:**
 ```bash
 cd example-app
-python3 -m http.server 5173
+python -m http.server 5173
 ```
 
 ### Ejemplo 2: Página Simple (`/simple-example/`)
@@ -264,7 +264,7 @@ python3 -m http.server 5173
 **Ejecutar:**
 ```bash
 cd simple-example
-python3 -m http.server 5174
+python -m http.server 5174
 ```
 
 ---

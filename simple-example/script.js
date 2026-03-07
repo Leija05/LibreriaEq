@@ -1,7 +1,6 @@
 // Importar la librería del ecualizador desde el directorio padre
 import { EqualizerEngine, equalizerPresets } from '../equalizer.browser.js';
 
-
 const audio = document.getElementById('audio');
 const fileInput = document.getElementById('file-input');
 const presetSelect = document.getElementById('preset-select');
